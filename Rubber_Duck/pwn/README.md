@@ -1,131 +1,133 @@
-The Payloads
+有效载荷
 ============
 
-The scripts are written in PowerShell (only work against target machines with PowerShell installed, i.e. Windows 7/8, Windows Server 2008. Administrative access is also required.
+在PowerShell脚本编写(只针对安装了PowerShell的工作目标机器,例如Windows 7/8,Windows Server 2008。还需要管理访问权限。
 
 
-The payloads are from three categories:
+有效载荷来自三个类别:
 
-* Reconnaissance (reports are generated with information about the target computer):
-Computer Information
-User Information
-USB Information
-Shared Drive Information
-Program Information
-Installed Updates
-User Document List
-Basic Network Information
-Network Scan
-Port Scan
-Copy Wireless Profile
-Take Screen Captures
-Copy FireFox Profile
-Extract SAM File
+* 侦察(报告由与目标计算机有关的信息生成):
 
-
-* Exploitation:
-Find and Upload File (FTP)
-Disable Firewall
-Add User
-Open Firewall Port
-Start Wi-Fi Access Point
-Share C:\ Drive
-Enable RDP
-Create a Reverse Shell
-Local DNS Poisoning
-Delete a Windows Update
+计算机信息
+用户信息
+USB信息
+共享驱动器的信息
+程序信息
+安装更新
+用户文档列表
+基本网络信息
+网络扫描
+端口扫描
+无线配置文件副本
+把屏幕截图
+FireFox配置文件副本
+提取SAM文件
 
 
-* Reporting (always together with the above items):
-Save Report to Target Machine
-FTP Report to External Host
-Email Report to GMAIL Account
-Save Files to USB Drive
+* 开发
+找到和上传文件(FTP)
+禁用防火墙
+添加用户
+打开防火墙端口
+启动无线接入点
+分享C:\开车
+使RDP
+创建一个反向Shell
+本地DNS中毒
+删除Windows更新
 
-We will use the last one in our payloads.
 
-Note that we use the name QUACK for the usb stick.
+* 报告(总是连同上面的项目):
+将报告保存到目标机
+外部主机的FTP报告
+电子邮件报告到GMAIL帐户
+将文件保存到USB驱动器
+
+我们将在有效载荷中使用最后一个。
+
+请注意，我们使用QUACK作为u盘的名字。
 
 
 
-Ducky Syntax
+极好的语法
 ============
 
-* Each command resides on a new line
+* 每个命令都位于一条新行中
 
-* Commands are ALL CAPS
+* 命令都是大写的
 
-* Lines beginning with REM will not be processed
+* 以REM开始的行不会被处理。
 
-* DEFAULT_DELAY or DEFAULTDELAY is used to define how long (in milliseconds * 10) to wait between each subsequent command. DEFAULT_DELAY must be issued at the beginning of the ducky script and is optional.
+* DEFAULT_DELAY 或 DEFAULTDELAY 用于定义在每个后续命令序列之间等待多长时间(以毫秒为单位* 10)。
+  DEFAULT_DELAY *必须在小鸭脚本的开头发行，并且是可选择的。
   DEFAULT_DELAY 100
-  REM delays 100ms between each subsequent command sequence
+  在随后的命令序列之间，REM延迟了100ms
 
-* DELAY creates a momentary pause in the ducky script.
-  DELAY 500
-  REM will wait 500ms before continuing to the next command.
+* 延迟在鸭子的脚本中造成短暂的停顿
+  延迟 500
+  REM会等500毫秒，然后再继续下一个命令。
 
-* STRING processes the text following taking special care to auto-shift.
-  GUI r
-  DELAY 500ms
+* 字符串处理文本后，对自动移位进行特殊处理。
+  GUI r
+  延迟500毫秒
   STRING notepad.exe
-  ENTER
-  DELAY 1000
-  STRING Hello World!
+  输入
+  延迟1000
+  字符串Hello World！
 
-* WINDOWS or GUI emulates the Windows-Key:
+* 窗户或GUI模拟Windows-Key:
   GUI r
-  REM will hold the Windows-key and press r
+  REM 将会持有 Windows-key 并按 r
 
-* MENU or APP emulates the App key, sometimes referred to as the menu key or context menu key. On Windows systems this is similar to the SHIFT F10 key combo.
+* 菜单或应用程序模拟应用程序键，有时被称为菜单键或上下文菜单键。在Windows系统上，这类似于F10键组合的变化。
   GUI d
-  MENU
-  STRING v
-  STRING d
+  菜单
+  字符串 v
+  字符串 d
 
-* SHIFT: unlike CAPSLOCK, cruise control for cool, the SHIFT command can be used when navigating fields to select text, among other functions.
-  SHIFT INSERT
-  REM this is paste for most operating systems
+* 转变: 不同于大写锁定、巡航控制冷却，在导航字段选择文本和其他函数时，可以使用SHIFT命令。
+  转变插入
+  REM 这是大多数操作系统的粘贴
 
-* ALT key is instrumental in many automation operations:
+* ALT键在许多自动化操作中都有帮助:
   GUI r
-  DELAY 50
-  STRING notepad.exe
-  ENTER
-  DELAY 100
-  STRING Hello World
+  延迟 50
+  字符串 notepad.exe
+  输入
+  延迟 100
+  字符串 Hello World
   ALT f
-  STRING s
-  REM alt-f pulls up the File menu and s saves.
+  字符串 s
+  REM alt-f 停文件菜单和保存。
 
 * CONTROL or CTRL:
   CONTROL ESCAPE
-  REM this is equivalent to the GUI key in Windows
+  REM 这就相当于Windows中的GUI键
 
-* Arrow Keys: ^ Command ^ | DOWNARROW or DOWN | | LEFTARROW or LEFT | | RIGHTARROW or RIGHT | | UPARROW or UP |
+* 方向键: ^ 命令 ^ | 下箭头 或 下 | | 左箭头 或 左 | | 右箭头 或 右 | | 上箭头 或 上 |
 
 
-Compiling
+编译
 ==========
 
-Ducky Scripts are compiled into hex files ready to be named inject.bin and moved to the root of a microSD card for execution by the USB Rubber Ducky.
+鸭式脚本被编译成十六进制文件，准备命名为 inject.bin 然后移到 microSD 卡的根上，用USB橡皮鸭来执行。
 
-This is done with the tool duckencoder.
+这是利用 duckencoder 这个工具来完成的.
 
-duckencoder is a cross-platform command-line Java program which converts the Ducky Script syntax into hex files.
+duckencoder 是一个跨平台的命令行Java程序，它将小鸭脚本语法转换成十六进制文件。
 
-For example on a Linux system:
+例如在Linux系统上:
 
 java -jar duckencoder.jar -i exploit.txt -o /media/microsdcard/inject.bin
 
 
-Simple Ducky Payload Generator
+简单的鸭子有效负载产生器
 =============================
 
-Also a good option.
+也是一个不错的选择。
 https://code.google.com/p/simple-ducky-payload-generator/downloads/list
 
 
-Wiki
+维基
 ====
 https://code.google.com/p/ducky-decode/wiki/Index?tm=6

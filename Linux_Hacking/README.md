@@ -1,15 +1,14 @@
 # Linux Hacking
 
-## Privilege Escalation
+## 提权
 
-* [Unix Privilege Escalation Exploits by years](https://github.com/Kabot/Unix-Privilege-Escalation-Exploits-Pack).
+* [多年以来Unix特权是如何升级利用的](https://github.com/Kabot/Unix-Privilege-Escalation-Exploits-Pack).
 
-## Folders
+## 附件文件夹
 
-### SSH Hacking
+### SSH攻击
 
-- getting unencrypted ssh keys from memory
-
+- 从内存中获取未加密的ssh密钥
 
 
 ### Shellshock
@@ -19,126 +18,108 @@
 
 ---
 
-## UNIX Exploits
+## UNIX利用
 
 ### RPC Daemons
 
-* rexd (remote execution): remote user runs a program on the system as a local user.
+* rexd (远程执行): 远程用户如同本地用户般执行程序
 
-* rshd, rlogind, sshd: honor trust relationship established with the source's IP address.
+* rshd, rlogind, sshd: 对基于源IP地址的建立关系高度信任
 
 
 ---
 
-## My Linux Guide & Tricks
+## 关于Linux的指南和技巧
 
-# The Linux Environment
+# Linux环境
 
 
-## The Linux Filesystem
+## Linux文件系统
 
-* Let's start getting an idea of our system. The *Linux filesystem* is composed of several system directories locate at **/**:
+* 让我们来了解我们的Linux系统。Linux文件系统由根目录（/）下多个系统目录构成：
 
 ```
 $ ls /
 ```
 
-* You can verify their sizes and where they are mounted with:
-
+* 你可以使用如下命令验证他们的大小和挂载点：
 ```
 $ df -h .
 Filesystem              Type  Size  Used Avail Use% Mounted on
 /dev/mapper/fedora-home ext4  127G   62G   59G  51% /home
 ```
 
-
-* The filesystem architecture is generally divided into the following folders:
+## Linux文件系统框架分为以下几个目录：
 
 ### /bin, /sbin and /user/sbin
-* **/bin** is a directory containing executable binaries, essential commands used in single-user mode, and essential commands required by all system users.
-
-* **/sbin** contains commands that are not essential for the system in single-user mode.
+* **/bin** 目录包含可执行文件，单用户模式下及所有系统用户的基本命令。
+* **/sbin**目录包含单用户模式系统非基本的命令 
 
 ### /dev
-* **/dev** contains device nodes, which are a type of pseudo-file used by most hardware and software devices (except for network devices).
+* **/dev** 目录包含设备节点（一种被大多数硬件和软件设备使用的为文件，网络设备除外） 
 
-* The directory also contains entries that are created by the **udev** system, which creates and manages device nodes on Linux (creating them dynamically when devices are found).
+* 目录还包括由udev系统生成的条目。（dev系统负责生成和管理Linux系统的设备节点，通常能够在发现设备时自动生成）
 
 ### /var
-* **/var** stands for variable and  contains files that are expected to be changing in size and content as the system is running.
-
-* For example, the system log files are located at **/var/log**, the packages and database files are located at **/var/lib**, the print queues are located at **/var/spool**, temporary files stay inside **/var/tmp**, and networks services can be found in subdirectories such as **/var/ftp** and **/var/www**.
+* **/var**是variable的简称，该目录包含系统运行过程中可变化大小和内容的文件。
+* 例如， 系统日志文件位于**/var/log**目录下, 包与数据库文件位于 **/var/lib**目录下,打印序列位于**/var/spool**目录下, 临时文件位于**/var/tmp**目录下,另外可以在**/var/ftp** 和**/var/www**等子目录下找到网络服务相关的文件
 
 ### /etc
 
-* **/etc** stands for the system configuration files. It contains no binary programs, but it might have some executable scripts.
+* **/etc**代表系统配置文件。该目录不包含二进制程序，但是会有一些可执行的脚本。
 
-* For instance, the file **/etc/resolv.conf** tells the system where to go on the network to obtain the host name of some IP address (*i.e.* DNS).
-
-* Additionally, the **/etc/passwd** file is the authoritative list of users on any Unix system. It does not contain the passwords: the encrypted password information was migrated into **/etc/shadow**.
+* 例如**/etc/resolv.conf**文件 包含主机名和相应的IP地址来完成DNS解析工作。
+* 另外t**/etc/passwd** 文件包含所有Unix系统上用户的认证信息，但其中不包含密码：经加密的密码信息已经被转存于**/etc/shadow**文件中。
 
 ### /lib
-* **/lib** contains libraries (common code shared by applications and needed for them to run) for essential programs in **/bin** and **/sbin**.
+* **/lib** 包含**/bin** 和 **/sbin**目录下基本程序的库(应用运行所需要并且相互共享的公共代码)。
 
-* This library filenames either start with ```ld``` or ```lib```  and are  called *dynamically loaded libraries* (or shared libraries).
-
+* 这些库文件名称通常以```ld```或者```lib``` 开头并且被称作*动态链接库*（或者共享库）
 
 ### /boot
 
-* **/boot** contains the few essential files needed to boot the system.
+* **/boot** 目录包含引导系统所需要的最基本的文件。
+* 安装在系统上每一个可替换的内核都包含4个文件：
 
-* For every alternative kernel installed on the system, there are four files:
+    * ```vmlinuz```: 引导所需要的压缩的Linux内核。
 
-    * ```vmlinuz```: the compressed Linux kernel, required for booting.
+    * ```initramfs``` or ```initrd```: 引导所需要的初始内存文件系统。
+    * ```config```: 调试所需要的内核配置文件。
 
-    * ```initramfs``` or ```initrd```: the initial RAM filesystem, required for booting.
+    * ```system.map```: 内核标志表。
 
-    * ```config```: the kernel configuration file, used for debugging.
-
-    * ```system.map```: the kernel symbol table.
-
-    * [GRUB](http://www.gnu.org/software/grub/) files can also be found here.
-
-
+    * [GRUB](http://www.gnu.org/software/grub/) 在这里也可以找到文件。
 
 ### /opt
-* Optional directory for application software packages, usually installed manually by the user.
+* 可选的应用软件包目录。该目录下的软件通常由用户手动安装。
 
 ### /tmp
-* **/tmp** contains temporary files that are  erased in a reboot.
+* **/tmp**目录包含一些临时文件，这些临时文件在重启后将被删除。 
 
 ### /usr
 
-* **/usr** contains multi-user applications, utilities and data. The common subdirectories are:
-    * **/usr/include**: header files used to compile applications.
+* **/usr** 目录包含多用户的应用、插件和数据。通常子目录有：
+    * **/usr/include**: 编译应用所用的头文件。
 
-    * **usr/lib**: libraries for programs in **usr/(s)bin**.
+    * **usr/lib**: 包含**usr/(s)bin**目录下程序的库文件。
 
-    * **usr/sbin**: non-essential system binaries, such as system daemons. In  modern Linux systems, this is actually linked together to **/sbin**.
+    * **usr/sbin**: 包含非必须的系统二进制文件，例如系统守护进程n。在目前的Linux系统中通常被链接至 **/sbin**目录。
 
-    * **usr/bin**: primary directory of executable commands of the system.
+    * **usr/bin**: 系统可执行命令的主要目录。
+    * **usr/share**: 被应用所使用的shaped数据, 通常是平台无关的。
+    * **usr/src**: 通常为Linux内核的源码。
 
-    * **usr/share**: shaped data used by applications, generally architecture-independent.
-
-    * **usr/src**: source code, usually for the Linux kernel.
-
-    * **usr/local**: data and programs specific to the local machine.
-
-
+    * **usr/local**: 针对本机的数据和程序。
 
 
 ---
 ## /dev Specials
 
-* There exist files provided by the operating system that do not represent any physical device, but provide a way to access special features:
-
-    * **/dev/null** ignores everything written to it. It's convenient for discarding unwanted output.
-
-    * **/dev/zero** contains an *infinite* numbers of zero bytes, which can be useful for creating files of a specified length.
-
-    * **/dev/urandom** and **/dev/random** contain infinite stream of operating-system-generated random numbers, available to any application that wants to read them. The difference between them is that the second guarantees strong randomness (it will wait until enough is available) and so it should used for encryption, while the former can be used for games.
-
-* For example, to output random bytes, you can type:
+* 存在操作系统提供的文件。这些文件虽然不代表任何物理设备, 但是使得用户能访问特殊功能。
+    * **/dev/null** 忽略任何写入的文件。 方便用于丢弃不要的输出。
+    * **/dev/zero** 包含一个无数个0字节*。可用于创建指定长度的文件。
+    * **/dev/urandom** and **/dev/random** 都包含无限个操作系统生成的随机数。对于所有应用程序都可访问。 两者的区别在于后者随机性更强，因此可用于加密。而前者只可用于游戏。
+* 例如使用一下命令即可输出随机数:
 
 ```
 $ cat /dev/urandom | strings
@@ -148,30 +129,30 @@ $ cat /dev/urandom | strings
 
 ## The Kernel
 
-*  The **Linux Kernel** is the program that manages *input/output requests* from software, and translates them into *data processing instructions* for the *central processing unit* (CPU).
+*  **Linu内核** 是管理来自软件*输入/输出请求* 并编译成CPU可执行的*数据处理指令* 的程序。
 
-* To find the Kernel information you can type:
+* 如何查找内核信息?
 
 ```
 $ cat /proc/version
 Linux version 3.14.9-200.fc20.x86_64 (mockbuild@bkernel02.phx2.fedoraproject.org) (gcc version 4.8.3 20140624 (Red Hat 4.8.3-1) (GCC) ) #1 SMP Thu Jun 26 21:40:51 UTC 2014
 ```
 
-* You can also print similar system information with  the specific command to print system information, ```uname```. The flag **-a** stands for all:
+* 你也可以通过指定的命令```uname```来查看类似的系统信息：
 
 ```
  $ uname -a
  Linux XXXXX 3.14.9-200.fc20.x86_64 #1 SMP Thu Jun 26 21:40:51 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
 ```
 
-* For instance, we might be interested on **checking whether you are using the latest Kernel**. You can do this by checking whether the outputs of the following commands match:
+* 例如，你可能想要验证你是否使用最新的内核。你可以通过查看如下两个命令输出是否一致来确认：
 
 ```
 $ rpm -qa kernel | sort -V | tail -n 1
 $ uname -r
 ```
 
-* Additionally, for Fedora (and RPM systems) you can check  what kernels are installed with:
+* 另外，对于Fedora(以及其他RPM系统)你可以使用如下命令查看安装的内核情况：
 
 ```
 $ rpm -q kernel
@@ -181,36 +162,35 @@ $ rpm -q kernel
 ---
 ## Processes
 
-* A running program is called **process**. Each process has a **owner** (in the same sense as when we talk about file permissions below).
+* 正在运行的程序被称作**process**（进程）。每个进程都有一个**owner**（所属用户）。（这和我们下面谈到的文件权限一样）
+* 通过**ps**命令你可以知道那些程序在运行。命令的输出也列出**process ID** 或者称 **PID**。这是某个进程的唯一标识（也是长期的）。如果对某个程序进行复制，每个进程将会分的不同的PID。
 
-* You can find out which programs are running with the **ps** command. This also gives the **process ID** or **PID**, which is a unique long-term identity for the process (different copies of a given program will have separate PIDs).
+* 为了将一个任务或进程放到后台,我们可以使用**&**来操作或者我们可以按下CTRL-Z然后输入**bg**.输入**fg**可以将其释放到前台.
 
-* To put a job (process) in the background we either run it with **&** or we press CTRL-Z and then type **bg**. To bring back to the foreground, we type **fg**.
-
-* To get the list of running jobs in the shell, we type **jobs**. Each job has a **job ID** which can be used with the percent sign **%** to **bg**, **fg** or **kill** (described below).
+* 我们可以输入**jobs**以得到shell中运行的任务列表.每个任务都有一个**job ID**可以和百分号**%**一起在**bg**,**fg**或是**kill**中使用(这些在后文会有详细介绍).
 
 
 ### ps
 
-* To see the processes that were not started from your current session you can run:
+* 想要查看非当前会话启动的进程可以执行如下命令:
 
 ```
 $ ps x
 ```
 
-* To see your processes and those belonging to other users:
+* 查看当前用户与其他用户进程:
 
 ```
 $ ps aux
 ```
 
-* To list all zombie processes you can either do:
+* 列出所有僵尸进程:
 
 ```
 $ ps aux | grep -w Z
 ```
 
-or
+或是
 
 ```
 $ ps -e
@@ -219,198 +199,189 @@ $ ps -e
 
 ### top
 
-* Another useful command is **top** (table of processes). It tells you which programs are using the most of memory or CPU:
-
+* 另一个有用的命令是**top** (table of processes)。它能告诉你占用内存和CPU最高的是那些进程。 
 ```
 $ top
 ```
 
-* I particularly like [htop](http://hisham.hm/htop/)  over top, which needs to be installed if you want to use it.
+* 我特别喜欢 [htop](http://hisham.hm/htop/) 命令，甚至胜过了top命令。htop命令需要安装才能使用。
 
 ### kill
 
-* To stop running a command you can use **kill**. This will send a message called  **signal** to the program. There are [64 different signals](http://www.linux.org/threads/kill-commands-and-signals.4423/), some having   distinct meanings from *stop running*:
+*  你可以使用**kill**命令来结束运行的程序。 这个命令将向程序发送称为 **signal**（信号量）的消息。 有[64种不同的信号量](http://www.linux.org/threads/kill-commands-and-signals.4423/), 每一种信号量都有不同的意义:
 
 ```
 $ kill <ID or PID>
 ```
 
-* The default signal sent by kill is **SIGTERM**, telling the program that you want it to quit. This is just a request, and the program can choose to ignore it.
+* kill命令默认发送的信号量是**SIGTERM**,告诉程序你想要退出 。这只是一个请求，程序可以选择忽视他。
 
-* The signal **SIGKILL** is mandatory and cause the immediate end of the process. The only exception is if the program is in the middle of making a request to the operating system, *i.e.* a system call). This is because the request needs to finish first.   **SIGKILL** is the 9th signal in the list and it is usually sent with:
-
+* 信号量 **SIGKILL** 具有强制性，能够立刻终止某个进程。但是也存在特殊情况，比如进程正处于在向操作系统的某个请求中（例如某种系统调用），而请求需要先完成。**SIGKILL**是信号量列表中第9个，因此往往通过以下形式命令发送信号量。
 ```
 $ kill -9 <ID or PID>
 ```
 
-* Pressing CTRL-C is a simpler way to tell the program to quit, and it sends a message called **SIGINT**. You can also specify the PID as an argument to kill.
+* CTRL-C组合键是一个退出进程更加简单的方式 ，它发送的信号量为**SIGINT**。你也可以指定一个PID座位参数。
 
 
 ### uptime
 
-* Another great command is **uptime**, which shows how long the system has been running, with a measure of its load average as well:
-
+* 另一个好用的命令是 **uptime**。它能够给出系统运行的时间，同时也能计算出系统的平均负载。
 ```
 $ uptime
 ```
 
 ### nice and renice
 
-* Finally, you can change processes priority using ```nice``` (runs a program with modified scheduling priority) and ```renice```(alter priority of running processes).
+*  最后介绍的是```nice``` 和```renice```。你可以使用使用这两个命令来修改进程的优先级。其中nice命令使用计划变更的优先级运行某个程序，而renice直接修改某个运行中进程的优先级。
 
 
 ---
-## Environment Variables
+## 环境变量
 
-* *Environment variables* are several dynamic named values in the operating system that can be used in running processes.
+* *Environment variables*（环境变量） 是一些操作系统中可被用于运行中进程的动态命名变量。 
 
 
-### set and env
-*  You can see the *environment variables and configuration* in your system with:
+### set与env
+*  你可以在系统中使用如下命令查看环境变量和配置：
 
 ```
 $ set
 ```
-or
+或者
 ```
 $ env
 ```
 
-### export and echo
-* The value of an environment variable can be changed with:
+### export与echo
+* 使用如下命令可以修改环境变量的值：
 
 ```
 $ export VAR=<value>
 ```
 
-* The value can be checked with:
+* 使用echo命令即可检查环境变量的值：
 
 ```
 $ echo $VAR
 ```
 
-* The **PATH** (search path) is the list of directories that the shell look in to try to find a particular command. For example, when you type ```ls``` it will look at ```/bin/ls```. The path is stored in the variable **PATH**, which is a list of directory names separated by colons and it's coded inside **./bashrc**. To export a new path you can do:
-
+*  **PATH** (搜索路径) 是一些供shell寻找命令的目录。 例如当你输入 ```ls```命令后，它将查看```/bin/ls```。 目录被存储在环境变量**PATH**中,这些目录被冒号分割并且被编码在文件**./bashrc** 中。你可以使用以下命令来增加一个新目录。
 ```
 $ export PATH=$PATH:/<DIRECTORY>
 ```
 
-### Variable in Scripts
+### 脚本中的变量
 
-* Inside a running shell script, there are pseudo-environment variables that are called with **$1**, **$2**, etc., for individual arguments that were passed to the script when it was run. In addition, **$0** is the name of the script and **$@** is for the list of all the command-line arguments.
-
-
-
+* 在一个运行的shell脚本中，有称为**$1**和**$2**等等的虚拟环境变量，这些变量对应相应的被传入脚本的参数。另外**$0**代表脚本的名字，**$@**代表所有命令行参数的列表。 
 
 
 ---
-##  The "~/." Files (dot-files)
+##  "~/." 文件 (dot-files)
 
-*  The leading dot in a file is used as an indicator to not list these files normally, but only when they are specifically requested. The reason is that, generally, dot-files are used to store configuration and sensitive information for  applications.
+* 某些文件的文件名前带有一个点号（英文句号）。在这里点号表明不该正常列出这些文件，除非特别地指明需要列出这些文件。这是因为dot-files（点号文件）通常用于存储应用功能的配置和敏感信息。
 
 ### ~/.bashrc
 
-* **~/.bashrc** contains scripts and variables that are executed when bash is invoked.
-
-* It's a good experience to customize your **~/.bashrc**. Just google for samples, or take a look at this [site dedicated for sharing dot-files](http://dotfiles.org), or at  [mine](https://github.com/mariwahl/Dotfiles-and-Bash-Examples/blob/master/configs/bashrc). Don't forget to ```source``` your **./bashrc** file every time you make a change (opening a new terminal has the same effect):
+* **~/.bashrc**包含bash被调用后执行的脚本和变量。
+* 自定义你的 **~/.bashrc**文件是一种很棒的体验. 可以google一下或者看下[site dedicated for sharing dot-files](http://dotfiles.org)以及 [mine](https://github.com/mariwahl/Dotfiles-and-Bash-Examples/blob/master/configs/bashrc)。不要忘了每次你更改**./bashrc**文件后使用```source``` 命令（重新打开一个终端也有同样的效果):
 
 ```
 $ source ~/.bashrc
 ```
 
-### Sensitive dot-files
+### 重要的dot-files
 
-* If you use  cryptographic programs such as [ssh](http://en.wikipedia.org/wiki/Secure_Shell) and [gpg](https://www.gnupg.org/), you'll find that they keep a lot of information in the directories **~/.ssh** and **~/.gnupg**.
+* 如果你使用具有加密功能的程序I例如 [ssh](http://en.wikipedia.org/wiki/Secure_Shell) 和 [gpg](https://www.gnupg.org/), 你会在目录**~/.ssh** 和**~/.gnupg**下找到它们存储的大量的信息。
+* 如果你是*Firefox* 用户, **~/.mozilla**目录包含了你web浏览器的历史记录、书签、cookie和任何被保存的密码。
 
-* If you are a *Firefox* user, the **~/.mozilla** directory contains your  web browsing history, bookmarks, cookies, and any saved passwords.
-
-* If you use [Pidgin](http://pidgin.im/), the **~/.purple** directory (after the name of [the IM library](https://developer.pidgin.im/wiki/WhatIsLibpurple)) contains private information. This includes sensitive cryptographic keys for users of cryptographic extensions to Pidgin such as [Off-the-Record](https://otr.cypherpunks.ca/).
+* 如果你使用 [Pidgin](http://pidgin.im/), **~/.purple** 目录 ([the IM library](https://developer.pidgin.im/wiki/WhatIsLibpurple)) 包含隐私信息。其中包括敏感的Pidgin加密扩展（比如 [Off-the-Record](https://otr.cypherpunks.ca/)）的用户密钥。
 
 
 ---
-## File Descriptors
+## 文件描述符
 
-* A **file descriptor** (FD) is a number indicator for accessing an I/O resource. The values are the following:
-    * fd 0: stdin (standard input).
-    * fd 1: stdout (standard output).
-    * fd 2: stderr (standard error).
+* **file descriptor** (文件描述符) 是访问I/O资源所使用的数字描述符。其值如下：
+    * fd 0: stdin (标准输入).
+    * fd 1: stdout (标准输出).
+    * fd 2: stderr (标准错误).
 
-* This naming is used for manipulation of these resources  in the command line. For example,  to send an **input** to a program you use **<**:
+* 这种命名方式用于在命令行中操作这些资源。例如，可以使用 **<**将输出重定向到某个程序：
 
 ```
 $ <PROGRAM> < <INPUT>
 ```
 
-* To send a program's **output** somewhere else than the terminal (such as a file), you use **>**. For example, to just  discard the output:
+* 你可以使用**>**向终端以外（例如文件）发送程序的**output**，例如，仅仅删除输出:
 
 ```
 $ <PROGRAM> > /dev/null
 ```
 
-* To send the program's error messages to a file you use the file descriptor 2:
+* 你可以使用“file descriptor 2”向文件发送程序错误信息:
 
 ```
 $ <PROGRAM> 2> <FILE>
 ```
 
-* To send the program's error messages to the same place where **stdout** is going, *i.e.* merging it into a single stream (this works greatly for pipelines):
+* 为了向**stdout**正在运行的地方发送程序错误的信息，*i.e.*将其并入一个字串流（这在导管输送中极为有效）:
 
 ```
 $ <PROGRAM> 2>&1
 ```
 
 ----
-## File Permissions
+## 文件权限
 
-* Every file/directory in Linux is said to belong to a particular **owner** and a particular **group**. Files also have permissions stating what operations are allowed.
-
-
-### chmod
-* A resource can have three permissions: read, write, and execute:
-
-    * For a file resource, these permission are: read the file, to modify the file, and to run the file as a program.
-
-    * For a directory, these permissions are: the ability to list the directory's contents, to create and delete files inside the directory, and to access files within the directory.
-
-* To change the permissions you use the command ```chmod```.
+* 在Linux中每一个文件或目录据说都属于一个特定的**owner**和一个特定的**group**.文件可以在操作被允许的地方进行声明.
 
 
-### chown and chgrp
+### 改变文件或目录访问权限
+* 资源会有三个权限：只读，可写和执行:
 
-* Unix permissions model  does not support *access control lists*  allowing a file to be shared with an enumerated list of users for a particular purpose. Instead, the admin needs to put all the users in a group and make the file  to belong to that group. File owners cannot share files with an arbitrary list of users.
+    * 对于一个文件来说,这些权限是阅读文件,修改文件和以程序运行文件.
 
+    * 对于目录来说,这些权限则是：列出目录内容,创建或删除目录中的文件和访问目录中的文件.
 
-* There are three agents relate to the resource: user, group, and all. Each of them can have separated permissions to read, write, and execute.
-
-* To change the owner of a resource you use ```chown```. There are two ways of setting permissions with chmod:
-
-    * A numeric form using octal modes: read = 4, write = 2, execute = 1, where you multiply by user = x100, group = x10, all = x1, and sum the values corresponding to the granted permissions. For example 755 = 700 + 50 + 5 = rwxr-xr-x: ``` $ chmod 774 <FILENAME>```
-
-    * An abbreviated letter-based form using symbolic modes:  u, g, or a, followed by a plus or minus, followed by a letter r, w, or x. This means that u+x "grants user execute permission", g-w  "denies group write permission", and a+r  "grants all read permission":```$ chmod g-w <FILENAME>```.
+* 使用```chmod```命令以改变权限.
 
 
-* To change the group you use ```chgrp```, using the same logic as for chmod.
+### 改变文件所属的用户和组
+
+* Unix权限模型不支持*access control lists*命令以出于特定目的与枚举用户列表分享文件.因此,管理员需要将所有用户拉入一个特殊组别使得文件属于这个组别.文件的拥有者将不能随意分享文件.
+
+
+* 关于资源有三个操作者：使用者,特定组别和所有人.每一个都有他们相分割的权限来浏览,编辑和执行文件.
+
+* 你可以使用```chown```来改变资源的拥有者.有两种方法来设置改变权限的权限:
+
+    * 使用八进制数字形式模式: read = 4, write = 2, execute = 1, 以及 user = x100, group = x10, all = x1,并且求出授予权限对应的值.例如755 = 700 + 50 + 5 = rwxr-xr-x: ``` $ chmod 774 <FILENAME>```
+
+    * 使用符号模式缩写letter-based形式:字母u, g,或a,其次是加减,再其次是字母r,w,或x. u+x代表着"授予用户执行权限", g-w表示"否认组别拥有写入权限",以及a+r代表"授予所有人阅读权限":```$ chmod g-w <FILENAME>```.
+
+
+* 你可以使用```chgrp```来改变组别,与改变权限是一样的逻辑.
 
 
 
-* To see the file permissions in the current folder, type:
+* 如果想要在最近的文件夹里查看文件的权限，需要输入:
 
 ```
 $ ls -l
 ```
 
-* For example, ```-rw-r--r--``` means that it is a file (-) where the owner has read (r) and write (w) permissions, but not execute permission (-).
+* 例如,```-rw-r--r--```表示这是文件(-)拥有者阅读(r)编辑(w)的权限,但是并没有执行权限(-).
 
 
 ---
 
-#  Shell Commands and Tricks
+#  Shell Commands 和 Tricks
 
-## Reading Files
+## 浏览文件
 
 ### cat
 
-* Prints the content of a file in the terminal:
+* 在终端打印文件内容:
 
 ```
 $ cat <FILENAME>
@@ -418,29 +389,29 @@ $ cat <FILENAME>
 
 ### tac
 
-* Prints the inverse of the content of a file  in the terminal (starting from the bottom):
+* 在终端颠倒着打印文件内容（从底部开始）:
 
 ```
 $ tac <FILENAME>
 ```
 
-### less and more
+### less 和 more
 
-* Both print the content of a file, but adding page control:
+* 两者都是打印文件内容，但是加入了页数控制:
 
 ```
 $ less <FILENAME>
 $ more <FILENAME>
 ```
 
-### head and tail
-* To read 20 lines from the begin:
+### head 和 tail
+* 从开头浏览20行:
 
 ```
 $ head -20 <FILENAME>
 ```
 
-* To read 20 lines from the bottom:
+* 从底部浏览20行:
 
 ```
 $ tail -10 <FILENAME>
@@ -448,7 +419,7 @@ $ tail -10 <FILENAME>
 
 ### nl
 
-* To print (cat) a file with line numbers:
+* 打印含有行数数字的文件:
 
 ```
 $ nl <FILENAME>
@@ -456,7 +427,7 @@ $ nl <FILENAME>
 
 ### tee
 
-* To save the output of a program and see it as well:
+* 保存文件的输出并使它可见:
 
 ```
 $ <PROGRAM> | tee -a <FILENAME>
@@ -464,7 +435,7 @@ $ <PROGRAM> | tee -a <FILENAME>
 
 ### wc
 
-* To print the length and number of lines of a file:
+* 打印文件的长度和行数:
 
 ```
 $ wc <FILENAME>
@@ -474,17 +445,18 @@ $ wc <FILENAME>
 
 ---
 ## Searching inside Files
+在文件中搜索
 
-### diff and diff3
+### diff 和 diff3
 
-* **diff** can be used to compare files and directories. Useful flags include: **-c** to list  differences, **-r** to recursively compare subdirectories, **-i** to ignore case, and **-w** to ignore spaces and tabs.
+* **diff**可以用来比较文件和目录.实用的参数包括：**-c**列举不同之处,**-r**递归比较子目录,**-i**忽略大小写,**-w**忽略空格和符号.
 
-* You can compare three files at once using **diff3**, which uses one file as the reference basis for the other two.
+* 你可以立刻使用**diff3**来比较三个文件，其中一个文件被用以作为另外两个的参考依据.
 
 
 ### file
 
-* The command **file** shows the real nature of a file:
+* 命令**file**展现了文件的真实属性:
 
 ```
 $ file requirements.txt
@@ -492,13 +464,13 @@ requirements.txt: ASCII text
 ```
 
 ### grep
-* **grep** finds matches for a particular search pattern. The flag **-l** lists the files that contain matches, the flag **-i** makes the search case insensitive, and the flag **-r** searches all the files in a directory and subdirectory:
+* **grep**寻找特定搜索模式匹配.参数**-l**列举包含匹配的文件,参数**-i** 使得搜索对于大小写非常敏感,**-r**搜索所有目录以及子目录里的文件:
 
 ```
 $ grep -lir <PATTERN> <FILENAME>
 ```
 
-* For example, to remove lines that are not equal to a word:
+* 例如,移动整行并不等于移动一个词:
 
 ```
 $ grep -xv <WORD> <FILENAME>
@@ -510,19 +482,19 @@ $ grep -xv <WORD> <FILENAME>
 
 ### ls
 
-* **ls**  lists  directory and files. Useful flags are **-l** to list the permissions of each file in the directory and **-a** to include the dot-files:
+* **ls**列出目录和文件.实用的参数**-l**用以列出目录中的每个文件的权限,**-a**把dot文件列入:
 
 ```
 $ ls -la
 ```
 
-* To list files sorted by size:
+* 根据大小排序文件:
 
 ```
 $ ls -lrS
 ```
 
-* To list the names of the 10 most recently modified files ending with .txt:
+* 列出最近修改的10个以.txt结尾的文件的文件名:
 
 ```
 $ ls -rt *.txt | tail -10
@@ -531,12 +503,12 @@ $ ls -rt *.txt | tail -10
 
 ### tree
 
-* The **tree** command lists contents of directories in a tree-like format.
+* **tree**命令用以列举树形图中目录的内容.
 
 
 ### find
 
-* To find files in a directory:
+* 在目录中查找文件:
 
 ```
 $ find <DIRECTORY> -name <FILENAME>
@@ -544,7 +516,7 @@ $ find <DIRECTORY> -name <FILENAME>
 
 ### which
 
-* To find  binaries in PATH variables:
+* 查找二进制文件的路径变量:
 
 ```
 $ which ls
@@ -552,7 +524,7 @@ $ which ls
 
 ### whereis
 
-* To find any file in any directory:
+* 在任意目录中查找文件:
 
 ```
 $ whereis <FILENAME>
@@ -560,13 +532,13 @@ $ whereis <FILENAME>
 
 ### locate
 
-* To find files by name (using database):
+* 按文件名查找文件（使用数据库）:
 
 ```
 $ locate <FILENAME>
 ```
 
-* To test if a a file exist:
+* 如果文件存在就加以检验:
 
 ```
 $ test -f <FILENAME>
@@ -574,36 +546,37 @@ $ test -f <FILENAME>
 
 ---
 ## Modifying Files
+ 修改文件
 
 ### true
 
-* To make a file empty:
+* 清空文件:
 ```
 $ true > <FILENAME>
 ```
 
 ### tr
 
-*  **tr** takes a pair of strings as arguments and replaces, in its input, every letter that occurs in the first string by the corresponding characters in the second string. For example, to make everything lowercase:
+*  **tr**用一双字符串作为参数和替换，在这里的输入中，每个在第一个字符串中出现的字母由第二个字符串中相应的字符替换.例如，使每个字母降级:
 
 ```
 $ tr A-Z a-z
 ```
 
-* To put every word in a line by replacing spaces with newlines:
+* 通过用新行替换空格在每一行中放入单词:
 
 ```
 $ tr -s ' ' '\n'
 ```
 
-* To combine multiple lines into a single line:
+* 混合多行成为独立的一行:
 
 
 ```
 $ tr -d '\n'
 ```
 
-* **tr** doesn't accept the names of files to act upon, so we can pipe it with cat to take input file arguments (same effect as ```$ <PROGRAM> < <FILENAME>```):
+* **tr**不接受文件的名称来运作,所以我们可以运用cat输入文件内容（与```$ <PROGRAM> < <FILENAME>```同效）:
 
 ```
 $ cat "$@" | tr
@@ -611,25 +584,25 @@ $ cat "$@" | tr
 
 ### sort
 
-* Sort the contents of text files. The flag **-r** sort backwards, and the flag **-n** selects numeric sort order (for example, without it, 2 comes after 1000):
+* 将文本文件排序.**-r**按背景排序，**-n**选择数字化排序（例如,如果没有它，2会在1000之后）：
 
 ```
 $ sort -rn <FILENAME>
 ```
 
-* To output a frequency count (histogram):
+* 输出频率计数（按柱状图形式）:
 
 ```
 $ sort <FILENAME> | uniq -c | sort -rn
 ```
 
-* To chose random lines from a file:
+* 从文件中随机选取数行：
 
 ```
 $ sort -R  <FILENAME> | head -10
 ```
 
-* To combine multiple files into one sorted file:
+* 合并多个文件成为一个整理好的文件:
 
 ```
 $ sort -m <FILENAME>
@@ -638,13 +611,13 @@ $ sort -m <FILENAME>
 ### uniq
 
 
-* **uniq** remove *adjacent* duplicate lines. The flag **-c** can include a count:
+* **uniq**移动相邻的重复行.**-c**将其列入单独列表:
 
 ```
 $ uniq -c <FILENAME>
 ```
 
-* To output only duplicate lines:
+* 输出只重复两次的行:
 
 ```
 $ uniq -d <FILENAME>
@@ -652,20 +625,20 @@ $ uniq -d <FILENAME>
 
 ### cut
 
-* **cut** selects particular fields (columns) from a structured text files (or particular characters from each line of any text file). The flag **-d** specifies what delimiter should be used to divide columns (default is tab), the flag **-f** specifies which field or fields to print and in what order:
+* **cut**从有结构的文本文件中选择特定的字段（列）（或是从任意文本文件中每一行选取特定的字符）.**-d**指定定界符分割列的位置（默认选项卡）,**-f**指定需要打印的字段以及打印的顺序:
 
 ```
 $ cut -d ' ' -f 2 <FILENAME>
 ```
 
-* The flag **-c** specifies a range of characters to output, so **-c1-2** means to output only the first two characters of each line:
+* **-c**指定输出的字符范围,所以**-c1-2**只输出每一行的开头两个字符:
 
 ```
 $ cut -c1-2 <FILENAME>
 ```
 
 ### join
-* **join** combines multiple file by common delimited fields:
+* **join**通过常见的分隔字段组合多个文件:
 
 ```
 $ join <FILENAME1> <FILENAME2>
@@ -679,22 +652,21 @@ $ join <FILENAME1> <FILENAME2>
 
 ### mkdir
 
-* **mkdir** creates a directory. An useful flag is **-p** which creates  the entire path of directories (in case they don't exist):
+* **mkdir**创建目录.一个实用的**-p**可以创建目录的完整路径（以防万一它们不存在）:
 
 ```
 $ mkdir -p <DIRNAME>
 ```
 
-
 ### cp
 
-* Copying directory trees is done with **cp**. The flag **-a** is used to preserve all metadata:
+* **cp**用以复制目录.**-a**保留所有的元数据:
 
 ```
 $ cp -a <ORIGIN> <DEST>
 ```
 
-* Interestingly, commands enclosed in **$()** can be run and then the output of the commands is substituted for the clause and can be used as a part of another command line:
+* 有趣的是,**$()**中包含的命令可以运行,命令的输出由条款代替,还可以被用作另一个命令行的部分:
 
 ```
 $ cp $(ls -rt *.txt | tail -10) <DEST>
@@ -703,17 +675,17 @@ $ cp $(ls -rt *.txt | tail -10) <DEST>
 
 ### pushd and popd
 
-* The **pushd** command saves the current working directory in memory so it can be returned to at any time, optionally changing to a new directory:
+* **pushd**命令用以在内存中保存最近的工作目录所以可以在任意时间返回,选择性转变为新的目录:
 
 ```
  $ pushd ~/Desktop/
 ```
 
-* The **popd** command returns to the path at the top of the directory stack.
+* **popd**命令返回路径在目录堆栈的顶部.
 
 ### ln
 
-* Files can be linked with different names with the **ln**. To create a symbolic (soft) link you can use the flag **-s**:
+* **ln**用来以不同名字关联文件.你可以使用**-s**创建一个符号（软）链接:
 
 ```
 $ ln -s <TARGET> <LINKNAME>
@@ -722,13 +694,13 @@ $ ln -s <TARGET> <LINKNAME>
 
 ### dd
 
-* **dd** is used for disk-to-disk copies, being useful for making copies of raw disk space. For example, to back up your [Master Boot Record](http://en.wikipedia.org/wiki/Master_boot_record) (MBR):
+* **dd**对于磁盘到磁盘的复制很有用,原始磁盘空间的复制也有很大用处.例如,备份你的 [主引导记录](http://en.wikipedia.org/wiki/Master_boot_record) (MBR):
 
 ```
 $ dd if=/dev/sda of=sda.mbr bs=512 count=1
 ```
 
-* To use **dd** to make a copy of one disk onto another:
+* 用**dd**从磁盘向另一个磁盘进行复制:
 
 ```
 $ dd if=/dev/sda of=/dev/sdb
@@ -741,19 +713,19 @@ $ dd if=/dev/sda of=/dev/sdb
 
 ### du
 
-* **du** shows how much disk space is used for each file:
+* **du**显示每个文件所占用的磁盘空间:
 
 ```
 $ du -sha
 ```
 
-* To see  this information sorted  and only the 10 largest files:
+* 显示信息分类及10个最大的文件:
 
 ```
 $ du -a | sort -rn | head -10
 ```
 
-* To determine which subdirectories are taking a lot of disk space:
+* 确定哪些子目录正在占用大量的磁盘空间:
 
 ```
 $ du --max-depth=1  | sort -k1 -rn
@@ -761,7 +733,7 @@ $ du --max-depth=1  | sort -k1 -rn
 
 ### df
 
-* **df**  shows how much disk space is used on each mounted filesystem. It displays  five columns for each filesystem: the name, the size, how much is used, how much is available, percentage of use, and where it is mounted. Note the values won't add up because Unix filesystems have **reserved** storage blogs which only the root user can write to.
+* **df**显示每个挂载文件系统所占用的磁盘空间. 每个文件系统显示5列: 文件名,大小,使用次数,可用大小,使用百分比,安装地点. 注意值不会增加因为Unix文件系统有只有根用户才能写入的**reserved**存储日志.
 
 ```
 $ df -h
@@ -771,25 +743,25 @@ $ df -h
 
 ### ifconfig
 
-* You can check and configure your network interface with:
+* 你可以检查和配置网络接口:
 
 ```
 $ ifconfig
 ```
 
-* In general, you will see the following devices when you issue **ifconfig**:
+* 总体而言,当你使用**ifconfig**时,你将会看到下列设备:
 
-    * ***eth0***: shows the Ethernet card with information such as: hardware (MAC) address, IP address, and the network mask.
+    * ***eth0***:显示以太网卡上的信息例如: 硬件地址,IP地址,网络掩码.
 
-    * ***lo***: loopback address or localhost.
+    * ***lo***:环回地址或本地主机.
 
 
-* **ifconfig** is supposed to be deprecated. See [my short guide on ip-netns](https://coderwall.com/p/uf_44a).
+* **ifconfig**可能会被否决. 查看 [我的短ip-netns指南](https://coderwall.com/p/uf_44a).
 
 
 ### dhclient
 
-* Linux has a DHCP server that runs a daemon called ```dhcpd```, assigning IP address to all the systems on the subnet (it also keeps logs files):
+* Linux的DHCP服务器运行一个守护进程称为```dhcpd```,将IP地址分配给所有子网上的系统(也使日志文件如此):
 
 ```
 $ dhclient
@@ -798,12 +770,12 @@ $ dhclient
 ### dig
 
 
-* **dig** is a DNS lookup utility (similar to ```dnslookup``` in Windows).
+* **dig**是一个DNS查找工具(类似于Windows中的```dnslookup```).
 
 ### netstat
 
 
-* **netstat** prints the network connections, routing tables, interface statistics, among others. Useful  flags are **-t** for TCP, **-u** for UDP, **-l** for listening, **-p** for program, **-n** for numeric. For example:
+* **netstat**打印网络连接、路由表、接口数据等。实用的参数是TCP的**-t**,UDP的**-u**,听方面的**-l**,项目的**-p**,数字的**-n**.例如:
 
 ```
 $ netstat -tulpn
@@ -813,13 +785,13 @@ $ netstat -tulpn
 
 ### netcat, telnet and ssh
 
-* To connect to a host server, you can  use **netcat** (nc) and **telnet**. To connect under an encrypted session, **ssh** is used. For example, to send a string to a host at port 3000:
+* 为了连接到主机服务器,可以使用**netcat**(nc)和**telnet**。**ssh**用以连接一个加密的会话.例如,将字符串发送到主机的3000端口上:
 
 ```
 $ echo 4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e | nc localhost 3000
 ```
 
-* To telnet to localhost at port 3000:
+* 在3000端口上远程登录到本地主机:
 
 ```
 $ telnet localhost 3000
@@ -829,25 +801,25 @@ $ telnet localhost 3000
 
 ### lsof
 
-* **lsof** lists open files (remember that everything is considered a file in Linux):
+* **lsof**列出公开文件(记住,一切都被认为是一个Linux下的文件):
 
 ```
 $ lsof <STRING>
 ```
 
-* To see open TCP ports:
+* 查看公开的TCP端口:
 
 ```
 $ lsof | grep TCP
 ```
 
-* To see IPv4 port(s):
+* 查看IPv4端口:
 
 ```
 $ lsof -Pnl +M -i4
 ```
 
-* To see IPv6 listing port(s):
+* 查看IPv6列表端口:
 
 ```
 $ lsof -Pnl +M -i6
@@ -862,24 +834,24 @@ $ lsof -Pnl +M -i6
 ### echo
 
 
-* **echo** prints its arguments as output. It can be useful for pipeling, and in this case you use the flag **-n** to not output the trailing new line:
+* **echo**打印它的参数作为输出.对于传输途径它可能是有用的,在这种情况下,使用**-n**不输出新行:
 ```
 $ echo -n <FILENAME>
 ```
 
-* **echo** can be useful to generate commands inside scripts (remember the discussion about file descriptor):
+* **echo**对于脚本中生成命令有用(记得讨论文件描述符):
 
 ```
 $ echo 'Done!' >&2
 ```
 
-* Or to find shell environment variables (remember the discussion about them):
+* 或查找shell环境变量(记得讨论):
 
 ```
 $ echo $PATH
 ```
 
-* Fir example, we can send the current date information to a file:
+* 例如,我们可以向文件发送最近的数据信息:
 
 ```
 $ echo Completed at $(date) >> log.log
@@ -887,13 +859,13 @@ $ echo Completed at $(date) >> log.log
 
 ### bc
 
-* A calculator program is given by the command **bc** The flag **-l** stands for the standard math library:
+* 命令**bc**给出计算机程序,**-l**代表标准的数据库:
 
 ```
 $ bc -l
 ```
 
-* For example, we can make a quick calculation with:
+* 例如,我们可以用它进行快速的计算:
 ```
 $ echo '2*15454' | bc
 30908
@@ -904,7 +876,7 @@ $ echo '2*15454' | bc
 ### w, who, finger, users
 
 
-* To find information about logged users you can use the commands **w, who, finger**, and **users**.
+* 你可以使用**w, who, finger**和**users**命令来查找关于登录用户的信息.
 
 
 
@@ -913,38 +885,38 @@ $ echo '2*15454' | bc
 ---
 ## Regular Expression 101
 
-* **Regular expressions** (regex) are  sequences of characters that forms a search pattern for use in pattern matching with strings.
+* **Regular expressions**正则表达式(regex)的字符序列,形成一个搜索模式用于模式匹配字符串.
 
-* Letters and numbers match themselves. Therefore,  'awesome' is a regular expression that matches 'awesome'.
+*  字母和数字匹配。因此,'awesome'是一个正则表达式匹配'awesome'.
 
-* The main rules that can be used with **grep** are:
-    * ```.``` matches any character.
-    * ```*``` any number of times (including zero).
-    * ```.*``` matches any string (including empty).
-    * ```[abc]``` matches any character a or b or c.
-    * ```[^abc]``` matches any character other than a or b or c.
-    * ```^``` matches the beginning of a line.
-    * ```$``` matches the end of a line.
+* 可以和**grep**一同使用的主要规则为:
+    * ```.``` 匹配任何字符.
+    * ```*``` 任何的次数(包括零).
+    * ```.*``` 匹配任意字符串(包括空串).
+    * ```[abc]``` 匹配任何字符a或b或c.
+    * ```[^abc]``` 匹配任何字符除却a或b或c.
+    * ```^``` 匹配一行的开始.
+    * ```$``` 匹配一行的结尾.
 
-* For example, to find lines in a file that begin with a particular string you can use the regex symbol **^**:
+* **^**例如,发现在一个文件中可以从一个特定的字符串可以使用正则表达式符号**^**:
 
 ```
 $ grep ^awesome
 ```
 
-* Additionally, to find lines that end with a particular string you can use **$**:
+* 此外,查找以一个特定的字符串结束的行可以使用**$**:
 
 ```
 $ grep awesome$
 ```
 
-*  As an extension, **egrep** uses a version called *extended regular expresses* (EREs) which include things such:
-    * ```()``` for grouping
-    * ```|``` for or
-    * ```+``` for one or more times
-    * ```\n``` for back-references (to refer to an additional copy of whatever was matched before by parenthesis group number n in this expression).
+*  As an extension,  uses a version called *extended regular expresses* (EREs) which include things such作为扩展,**egrep**使用一个叫做*extended regular expresses*(扩展正则表达)的版本来包含这类事情:
+    * ```()``` 对于分组
+    * ```|``` 或者
+    * ```+``` 一次或多次
+    * ```\n``` 反向引用(在这个表达式中，引用括号组数字n之前的任何匹配的副本).
 
-* For instance, you can use ``` egrep '.{12}'```to find words of at least 12 letters. You can use ```egrep -x '.{12}'``` to find words of exactly twelve letters.
+* 例如,可以使用``` egrep '.{12}'```找到至少12个字母的单词。您可以使用```egrep -x '.{12}'```找到由十二个字母构成的单词.
 
 
 
@@ -953,23 +925,23 @@ $ grep awesome$
 
 ## Awk and Sed
 
-* **awk**  is a pattern scanning tool while **sed** is a stream editor for filtering and transform text. While these tools are extremely powerful, if you have knowledge of any very high level languages such as Python or Ruby, you  don't necessary need to learn them.
+* **awk**是一个模式扫描工具而**sed**是过滤和转换文本流编辑器.虽然这些工具非常强大, 但是如果你有任何高水平的语言知识如Python或Ruby, 那么你不就需要学习它们这些工具.
 
 ### sed
 
-* Let's say we want  to replace every occurrence of *mysql* and with MySQL (Linux is case sensitive), and then save the new file to <FILENAME>. We can write an one-line command that says  "search for the word mysql and replace it with the word MySQL":
+* 假设我们想用mysql取代每个*mysql*(Linux大小写敏感), 然后保存新文件<FILENAME>. 我们可以写一个单行命令说“搜索词mysql,代之以MySQL”:
 
 ```
 $ sed s/mysql/MySQL/g <FILEORIGIN> > <FILEDEST>
 ```
 
-* To replace any instances of period followed by any number of spaces with a period followed by a single space in every file in this directory:
+* 用这个目录中每个文件后跟单独空间的一段时期来替换后跟任意数量空间的任何时期的实例:
 
 ```
 $ sed -i 's/\. */. /g' *
 ```
 
-* To pass an input through a stream editor and then quit after printing the number of lines designated by the script's first parameter:
+*在打印出第一个参数指定的脚本行数后通过一个输入流编辑器然后放弃:
 
 ```
 $ sed ${1}q
@@ -977,17 +949,16 @@ $ sed ${1}q
 
 
 
-
 ----
 
 # Some More Advanced Stuff
-
+一些更高级的东西
 
 ## Scheduling Recurrent Processes
-
+调度过程
 
 ### at
-* A very cute bash command is **at**, which allows you to run processes later (ended with CTRL+D):
+* 一个非常可爱的bash命令**at**, 允许你稍后运行流程(以CTRL + D结束）:
 
 ```
 $ at 3pm
@@ -995,30 +966,29 @@ $ at 3pm
 
 
 ### cron
-* If you  have to run processes periodically, you should use **cron**, which is already running as a [system daemon](http://en.wikipedia.org/wiki/Daemon_%28computing%29). You can add a list of tasks in a file named **crontab** and install those lists using a program also called **crontab**. **cron** checks all the installed crontab files and run cron jobs.
+* 如果你需要定期运行过程, 你应该使用**cron**, 像这样运行[系统守护进程](http://en.wikipedia.org/wiki/Daemon_%28computing%29).你可以在任务列表中添加一个文件命名为**crontab**用被称为**crontab**的程序运行列表. **cron**检查所有安装的定时任务文件并运行计划文件作业.
 
-
-* To view the contents of your crontab, run:
+* 查看你的定时任务的内容并运行:
 
 ```
 $ crontab -l
 ```
 
-* To edit your crontab, run:
+* 编辑你的定时任务的内容并运行:
 
 ```
 $ crontab -e
 ```
 
-* The format of cron job is: *min, hour, day, month, dow* (day of the week, where Sunday is 0). They are separated by tabs or spaces. The symbol * means any. It's possible to specify many values with commas.
+* 配置文件的格式: *min, hour, day, month, dow* (以数字表示周几,周日是0). 他们由制表符或空格隔开. 标志*代表任意.可以指定用逗号代替许多值.
 
-* For example, to run a backup every day at 5am, edit your crontab to:
+* 例如,每天早上5点运行备份,编辑你的定时任务:
 
 ```
 0 5 * * * /home/files/backup.sh
 ```
 
-* Or if you want to remember some birthday, you can edit your crontab to:
+* 或者你想要记住一些人的生日,你可以编辑你的定时任务:
 
 ```
 * * 16 1 * echo "Remember Mom's bday!"
@@ -1028,13 +998,13 @@ $ crontab -e
 ---
 ##  rsync
 
-*  **rsync**  performs file synchronization and file transfer. It can compress the data transferred using *zlib* and can use SSH or [stunnel](https://www.stunnel.org/index.html) to encrypt the transfer.
+*  **rsync**执行文件同步和文件传输.使用*zlib*可以进行压缩转移数据,也可以使用SSH或是[stunnel软件](https://www.stunnel.org/index.html) 进行加密传输.
 
-* **rsync** is very efficient when recursively copying one directory tree to another because only the differences are transmitted over the network.
+* 当递归地复制一个目录树到另一个时**rsync**非常有效因为这些差别只在网络上传输.
 
-* Useful flags are: **-e** to specify the SSH as remote shell, **-a** for archive mode, **-r** for recurse into directories, and **-z** to compress file data.
+* 实用的命令是: **-e**像远程shell一样指定SSH, **-a**用于归档模式, **-r**用于递归到目录,以及**-z**用于压缩文件数据.
 
-* A very common set is **-av** which makes **rsync** to work recursively, preserving metadata about the files it copies, and displaying the name of each file as it is copied. For example, the command below is used to transfer some directory  to the **/planning** subdirectory on a remote host:
+* **-av**是一个很常见的设置可以使得**rsync**递归地工作,它保留有关文件的元数据复制,显示正在复制的每个文件的名称.例如,下面的命令是用来传输一些目录到远程主机上的**/planning**子目录:
 
 ```
 $ rsync -av <DIRECTORY> <HOST>:/planning
@@ -1043,21 +1013,21 @@ $ rsync -av <DIRECTORY> <HOST>:/planning
 
 
 ----
-## File Compression
+## 文件压缩
 
-* Historically, **tar** stood for tape archive and was used to archive files to a magnetic tape. Today **tar** is used to allow you to create or extract files from an archive file, often called a **tarball**.
+* 从历史上看, **tar**代表磁带归档,用于利用磁带归档文件.在今天**tar**用于允许你从一个通常称为**tarball**的归档文件中创建或提取文件.
 
-* Additionally you can add *file compression*, which works by finding redundancies in a file (like repeated strings) and creating more concise representation of the file's content. The most common compression programs are **gzip** and **bzip2**.
+* 此外你可以添加*file compression*,通过在文件中查找冗余之处(例如重复的字符串)以及创建更多文件内容的简洁表达来工作.最常见的压缩程序是**gzip** 和**bzip2**.
+ 
+ * 使用**tar**时,**f**必须是最后选择.不需要连字符.你可以添加**v**作为详细阐述.
 
-* When issuing **tar**, the flag **f** must be the last option. No hyphen is needed. You can add **v** as verbose.
-
-* A simple tarball is created with the flag **c**:
+* 使用**c**指令可以生成一个简单的打包工具:
 
 ```
 $ tar cf <FILE.tar> <CONTENTS>
 ```
 
-* To extract a tarball you use the flag **x**:
+* 使用**x**指令可以解压:
 
 ```
 $ tar xf <FILE.tar>
@@ -1066,17 +1036,17 @@ $ tar xf <FILE.tar>
 ### gzip
 
 
-* **gzip** is the most frequently used Linux compression utility. To create the archive and compress with gzip you use the flag **z**:
+* **gzip**是Linux最常用的实用压缩程序.使用**z**可以用gzip来进行文件的归档或是解压:
 
 ```
 $ tar zcf <FILE.tar.gz>
 ```
 
-* You can directly work with gzip-compressed files with ```zcat, zmore, zless, zgrep, zegrep```.
+* 你可以用```zcat, zmore, zless, zgrep, zegrep```直接对gzip压缩的文件进行操作.
 
 ### bzip2
 
-* **bzip2** produces files significantly smaller than those produced by gzip. To create the archive and compress with bz2 you use the flag **j**:
+* **bzip2**创建的文件比gzip压缩的文件小得多.你可以用**j**通过bz2对文件进行归档和压缩:
 
 ```
 $ tar jcf <FILE.tar.bz2>
@@ -1084,7 +1054,7 @@ $ tar jcf <FILE.tar.bz2>
 
 ### xz
 
-* **xz** is the most space efficient compression utility used in Linux. To create the archive and compress with xz:
+* **xz**是Linux系统中使用最高效的压缩效用.使用xz以创建文件的归档和压缩:
 
 ```
 $ tar Jcf <FILE.tar.xz>
@@ -1094,22 +1064,22 @@ $ tar Jcf <FILE.tar.xz>
 ----
 ## Logs
 
-* Standard logging facility can be found  at ```/var/log```. For instance:
-    *  ```/var/log/boot.log``` contains information that are logged when the system boots.
-    * ```/var/log/auth.log``` contains system authorization information.
-    * ```/var/log/dmesg``` contains kernel ring buffer information.
+* d在```/var/log```可以看到标准日志功能.例如:
+    *  ```/var/log/boot.log``` 包含系统启动时登记的信息.
+    * ```/var/log/auth.log``` 包含系统授权信息.
+    * ```/var/log/dmesg``` 包含内核环缓冲区信息.
 
 
 * The file ```/etc/rsyslog.conf``` controls what goes inside the log files.
 
-* The folder ```/etc/services``` is a plain ASCII file providing a mapping between friendly textual names for internet services, and their underlying assigned port numbers and protocol types. To check it:
+* 文件夹```/etc/services```是一个简单的ASCII文件,提供互联网服务的友好名称文本之间的映射,以及他们的基本分配的端口号和协议类型.检验可用以下方法:
 
 ```
 $ cat /etc/services
 $ grep 110 /etc/services
 ```
 
-* To see what your system is logging:
+* 查看您的系统日志记录:
 
 ```
 $ lastlog
@@ -1119,25 +1089,25 @@ $ lastlog
 -----
 ## /proc and inodes
 
-* If the last link to a file is deleted but this file is open in some editor, we can still retrieve its content. This can be done, for example, by:
-    1. attaching a debugger like **gdb** to the program that has the file open,
+* 如果最后一个到文件的链接被删除,但这个文件打开在一些编辑器中, 我们仍然可以获取其内容. 例如，可以这样做:
+    1. 向文件被打开的程序的调试器添加例如**gdb**的指令 ,
 
-    2. commanding the program to read the content out of the file descriptor (the **/proc** filesystem), copying the file content directly out of the open file descriptor pseudo-file inside **/proc**.
+    2. 指挥程序阅读文件描述符的内容 (**/proc**文件系统), 直接在打开的有文件描述符的伪文件里面复制文件内容.
 
-* For example, if one runs ```$ dd if=/dev/zero of=trash & sleep 10; rm trash```, the available disk space on the system will continue to go downward (since more  contents gets written into the file by which **dd** is sending its output).
+* 例如,如果执行```$ dd if=/dev/zero of=trash & sleep 10; rm trash```命令,系统上的可用磁盘空间将继续下行(因为更多的内容在**dd**发送其输出的地址写入到文件).
 
-* However, the file can't be seen everywhere in the system! Only  killing the **dd** process will cause this space to be reclaimed.
+* 但是, 文件在系统中任何地点都不可见!只有查看**dd**命令的执行进度会导致这个空间被回收.
 
-* An **index node** (inode) is a data structure used to represent a filesystem object such as files or  directories. The true name of a file, even when it has no other name, is in fact its *inode number* within the filesystem it was created, which can be obtained by
+* **index node** (索引节点)是一种用来表示一个文件系统对象例如文件或目录的数据结构. 一个文件的真实名称,即使它没有其他的名字, 实际上是其在文件系统中创建时的*inode number*,这可以以下列途径获得
 ```
 $ stat
 ```
-or
+或是
 ```
 $ ls -i
 ```
 
-* Creating a hard link with **ln** results in a new file with the same *inode number* as the original. Running *rm* won't affect the other file:
+* 与一个新文件中的**ln**结果创建硬链接与 其原本的*inode number*一致.运行*rm*不会影响另一个文件:
 
 ```
 $ echo awesome > awesome
@@ -1152,9 +1122,9 @@ $ ls -i *some
 ----
 ## Text, Hexdump, and Encodings
 
-* A Linux text file contains lines consisting of zero of more text characters, followed by the **newline character** (ASCII 10, also referred to as hexadecimal 0x0A or '\n').
+* A Linux text file contains lines consisting of zero of more text characters一个Linux文本文件包含由零更多的文本字符组成的数行代码,**newline character**紧随其后(ASCII 10,也称为十六进制的0x0A或是'\n').
 
-* A text with a single line containing the word 'Hello' in  ASCII would be 6 bytes (one for each letter, and one for the trailing newline). For example, the text below:
+* 有一行含有单词'Hello'的文本ASCII是6字节 (每个字母是一个字节, 每个拖尾换行符也是一个字节). 例如以下文字:
 
 ```
 $ cat text.txt
@@ -1163,7 +1133,7 @@ Linux is really cool.
 Let's learn more!
 ```
 
-is represented as:
+代表着:
 
 ```
 $ hexdump -c < text.txt
@@ -1174,30 +1144,30 @@ $ hexdump -c < text.txt
 0000038
 ```
 
-* The numbers displayed at left are the hexadecimal byte offsets of each output line in the file.
+* 左边数字显示的十六进制字节是文件中的每个输出行的偏移量.
 
-* Unlike text files on other operating systems, Linux files does not end with a special end-of-file character.
-
-
-* Linux text files were traditionally always interpreted as **ASCII**. In ASCII, each character is a single byte, the ASCII standard as such defines exactly **128 characters** from **ASCII 0 to ASCII 127**. Some of them are non-printable (such as newline). The printable stats at **32**. In that case, **ISO 8859** standards were  extensions to ASCII where the character positions **128 to 255** are given foreign-language interpretation.
-
-* Nowadays, Linux files are most often interpreted as **UTF-8**, which is an encoding of **Unicode**, a character set standard able to represent a very large number of languages.
-
-* For East asian languages, **UTF-8 **chars are interpreted with **3 bytes** and  **UTF-16** chars are interpreted with **2 bytes**. For western languages (such as German, for example), **UTF-16** characters are interpreted with **2 bytes**, and all the regular characters have **00** in front of it.
-
-* In **UTF-16**, sentences start with two bytes **fe ff** (decimal 254 255) which don't encode as any part of the text. These are the **Unicode byte order mark** (BOM), which guards against certain kinds of encoding errors [1].
+* 不同于文本文件在其他操作系统中的情况,Linux中文件不以一个特殊的文件结束字符结束.
 
 
-* Linux has a command to translate between character sets:
+* Linux文本文件通常总是解释为**ASCII**.在ASCII中,每个字符是一个字节,ASCII的标准定义 **128 characters**从**ASCII 0到ASCII 127**.其中有些是非输出的(例如换行符).输出数据统计在**32**之后.既然那样,当字符位置处于**128到255**并给出外语翻译时,**ISO 8859**是ASCII标准的扩展 .
+
+* 现在,Linux文件通常解释为**UTF-8**,**Unicode**的一种编码, 一套字符标准能够代表大量的语言.
+
+* 对于东亚语言, **UTF-8 **字符是用**3 bytes**翻译的并且**UTF-16**字符是用**2 bytes**翻译的.对于西方语言(例如德语), **UTF-16**字符是用**2 bytes**翻译的,并且所有字符之前有**00**.
+
+* 在**UTF-16**中,句子以不像其他任何部分文本编码的**fe ff**开始(小数为254 255) .这些是**Unicode byte order mark** (BOM),用来防范某些类型的编码错误[1].
+
+
+* Linux字符集之间有一个命令翻译:
 
 ```
 $ recode iso8859-1..utf-8
 ```
 
-* This is useful if you see a **mojibake**, which is a character set encoding mismatch bug.
+* 如果你看到**mojibake**,这是一个字符集编码不匹配错误,是有用的.
 
 
-* There are only two mandatory rules about characters that can't appear in filename: null bytes (bytes that have numeric value zero) and forward slashes **/**.
+* 只有两个强制性规则的字符不能在文件名中出现:空字节(字节数值为0)和斜线 **/**.
 
 
 
@@ -1208,7 +1178,7 @@ $ recode iso8859-1..utf-8
 
 ## Creating Pseudo-Random Passwords
 
-* Add this to your **~/.bashrc**:
+*向你的**~/.bashrc**添加如下内容:
 
 ```
 genpass() {
@@ -1218,13 +1188,13 @@ genpass() {
 }
 ```
 
-* Then, to generate passwords, just type:
+* 接着,生成密码,只输入:
 
 ```
 $ genpass
 ```
 
-* For example:
+*例如:
 
 ```sh
 $ genpass
@@ -1241,13 +1211,13 @@ ZEfgQvpY4ixePt
 ---
 ## Password Asterisks
 
-* By default, when you type your password in the terminal you should see no feedback. If you would like to see asterisks instead, edit:
+*当您输入您的密码时,默认在终端看不到任何反馈. 如果相反你想看到星号,那么编辑:
 
 ```
 $ sudo visudo
 ```
 
-to have the value:
+来获得权限:
 
 ```
 Defaults                           pwfeedback
@@ -1257,7 +1227,7 @@ Defaults                           pwfeedback
 ----
 ## imagemagick
 
-* You can create a gif file from terminal with  ***imagemagick***:
+* 你可以使用***imagemagick***在终端创建一个gif文件:
 
 ```
 $ mogrify -resize 640x480 *.jpg
@@ -1265,10 +1235,10 @@ $ convert -delay 20 -loop 0 *.jpg myimage.gif
 ```
 
 ---
-## Easy access to the History
+## 简单访问历史
 
 
-* Type ```!!``` to run the last command in the history, ```!-2``` for the command before that, and so on.
+* 输入```!!``` 运行历史上最后一条命令, ```!-2``` 以运行在此之前的指令以及其他.
 
 
 

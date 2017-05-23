@@ -1,36 +1,36 @@
-# Forensics
+# 取证
 
-## Disk Forensics
+## 磁盘取证
 
-### Basic useful CLI tools:
+### 一些基础使用的命令行工具
 
 #### ps
-Show the processes for all users (a), displaying the process's user/ownser (u), and the processes that are not attached to a terminal (x):
+
+列出所有用户的进程（a）,并显示所属用户名（u）,另外还包括没有绑定终端的（x）.
 
 ```shell
 $ ps aux
 ```
-
-Display the full listing of all processes (useful for finding underisable processes):
+显示所有进程完整的列表
 
 ```shell
 $ ps ef
 ```
 
 #### lsof
+查看指定进程详细信息，包括与之相关的文件和端口。
 
-Display a specific pricess in more details, by displaying the files and ports associated with that process.
 ```shell
 $ lsof -p
 ```
-
-Display processes running form or acessing files that have been unlinked: 
+查看进程运行状态或者正在访问的文件：
 
 ```shell
 $ lsof +L1
 ```
 
 #### find
+查找命令
 
 ```shell
 $ find / -uid 0
@@ -38,19 +38,20 @@ $ find / -uid 0
 
 ### arp
 
-Display all MAC to IP address mapping of the system (useful for finding addresses of systems that are not part of the network.
+查看所有系统的MAC&IP地址映射
 
 ```shell
 $ arp -a
 ```
 
 
-Others: uptime, free, df.
+其他一些命令: uptime, free, df.
 
+### dd 
+拷贝文件并转换
 
-### dd
-
-### strings
+### strings 
+查找字符串
 
 ```shell
 $ strings /tmp/mem.dump | grep BOOT_
@@ -59,50 +60,50 @@ $ BOOT_IMAGE=/vmlinuz-3.5.0-23-generic
 
 
 
-### scalpel
+### scalpel 文件分割器
 
-### TrID
+### TrID 文件类型分析工具
 
-### binwalk
+### binwalk 后门（固件）分析工具
 
-### foremost
+### foremost 文件恢复工具
 
-### ExifTool
+### ExifTool 图片信息查看工具
 
-### dff
+### dff （Digital Forensics Framework）恢复丢失文件，证据分析
 
-### CAINE
+### CAINE 填补不同工具间的互操作间隙
 
-### The Sleuth Kit
+### The Sleuth Kit 分析磁盘映像，恢复文件
 
 
 ----------
 
-## Memory Forensics
+## 内存取证
 
-### memdump
+### 内存显示备份文件系统
 
 
 
-### Volatility: Analysing Dumps
+### Volatility分析镜像文件: 分析备份文件系统
 
-* [Lots of material on Volatility and Memory Forensics here](volatility.md)
-* [On OSX Memory Forensics](osx_memory_forensics.md)
-* I highly recommend their training.
+* [更多关于分析镜像，备份文件系统的信息](volatility.md)
+* [OSX系统内存取证](osx_memory_forensics.md)
+* 强烈推荐他们的练习.
 
 
 ---------------
-## Scripts
+## 脚本
 
 #### PDFs
-Tools to test a PDF file:
+测试PDF文件的工具:
 
 - pdfid
 - pdf-parser
 
 
 -----------
-## References
+## 参考文献
 
-* [File system analysis](http://wiki.sleuthkit.org/index.php?title=FS_Analysis)
-* [TSK Tool Overview](http://wiki.sleuthkit.org/index.php?title=Mactime)
+* [文件系统分析](http://wiki.sleuthkit.org/index.php?title=FS_Analysis)
+* [TSK工具概述](http://wiki.sleuthkit.org/index.php?title=Mactime)
