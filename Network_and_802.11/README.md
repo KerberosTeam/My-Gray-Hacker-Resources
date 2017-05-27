@@ -14,11 +14,11 @@
 
 - Shark the ripper
 - A comprehensive guide
-- Sample of PCAP files
+- PCAP文件的样本
 
 ### Scanner
 
-- Several scripts for sniffing/scanner:
+- 一些嗅探/扫描的脚本:
     * ICMPHeader class
     * IPHeader class
     * Scanner
